@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>DataEngineer.ai — Free Data Engineering Guides & Tutorials</title>
+  <meta name="description" content="Free data engineering guides on AWS, PySpark, Databricks, Delta Lake, Airflow and Snowflake. Written by a Senior Data Engineer with 6 years of production experience."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #2D8653;
+      --green-light: #E8F5EE;
+      --green-mid:   #3AAA6B;
+      --blue:        #1A6FBF;
+      --blue-light:  #E8F0FB;
+      --orange:      #E07A1F;
+      --orange-light:#FEF3E8;
+      --purple:      #6B3FA0;
+      --purple-light:#F3EDFB;
+      --red:         #C0392B;
+      --red-light:   #FDECEA;
+      --bg:          #F7F9FC;
+      --white:       #FFFFFF;
+      --border:      #E2E8F0;
+      --text:        #1A202C;
+      --muted:       #64748B;
+      --light-text:  #94A3B8;
+      --sans:        'Plus Jakarta Sans', sans-serif;
+      --mono:        'Fira Code', monospace;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.10);
+      --shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--text); background: var(--bg); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; }
+
+    /* ─── TOP BANNER ─── */
+    .top-banner {
+      background: var(--green);
+      color: #fff;
+      text-align: center;
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .top-banner a { color: #fff; text-decoration: underline; }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 64px;
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--green);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .logo span { color: var(--text); }
+
+    .search-bar {
+      flex: 1; max-width: 520px;
+      position: relative;
+      display: flex; align-items: center;
+    }
+    .search-bar input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      padding: 0.5rem 1rem 0.5rem 2.8rem;
+      font-size: 0.875rem;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-bar input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,134,83,0.12); }
+    .search-bar input::placeholder { color: var(--light-text); }
+    .search-icon {
+      position: absolute; left: 1rem;
+      color: var(--muted); font-size: 0.9rem; pointer-events: none;
+    }
+
+    .header-nav {
+      display: flex; align-items: center; gap: 0.25rem;
+      list-style: none; margin-left: auto; flex-shrink: 0;
+    }
+    .header-nav a {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--muted);
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .header-nav a:hover { background: var(--green-light); color: var(--green); }
+    .header-nav .btn-signup {
+      background: var(--green);
+      color: #fff !important;
+      padding: 0.45rem 1.1rem;
+      border-radius: 20px;
+    }
+    .header-nav .btn-signup:hover { background: var(--green-mid); }
+
+    /* ─── CATEGORY NAV ─── */
+    .cat-nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex; gap: 0; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-nav-inner::-webkit-scrollbar { display: none; }
+    .cat-link {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .cat-link:hover { color: var(--green); border-bottom-color: var(--green); }
+    .cat-link.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #1A6FBF 100%);
+      color: #fff;
+      padding: 4.5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-inner { position: relative; max-width: 760px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em { font-style: normal; color: #74C69D; }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.8);
+      max-width: 560px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+    .hero-search {
+      display: flex; gap: 0; max-width: 520px; margin: 0 auto 2rem;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .hero-search input {
+      flex: 1; border: none; outline: none;
+      padding: 0.9rem 1.25rem;
+      font-size: 0.9rem;
+      font-family: var(--sans);
+      color: var(--text);
+    }
+    .hero-search button {
+      background: var(--green);
+      border: none; cursor: pointer;
+      padding: 0 1.5rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      font-family: var(--sans);
+      transition: background 0.2s;
+    }
+    .hero-search button:hover { background: var(--green-mid); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+    }
+    .hstat { text-align: center; }
+    .hstat-num { font-size: 1.6rem; font-weight: 800; color: #fff; }
+    .hstat-label { font-size: 0.75rem; color: rgba(255,255,255,0.65); font-weight: 500; }
+
+    /* ─── MAIN LAYOUT ─── */
+    .main {
+      max-width: 1280px; margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ─── TOPIC CHIPS ─── */
+    .topic-chips {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 1.5px solid transparent;
+    }
+    .chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .chip.aws    { background: var(--orange-light); color: var(--orange); border-color: #F5C89A; }
+    .chip.spark  { background: #FFF0F0; color: #C0392B; border-color: #F5B7B1; }
+    .chip.delta  { background: var(--blue-light); color: var(--blue); border-color: #A9CCF1; }
+    .chip.airflow{ background: #FFF8E1; color: #C77A00; border-color: #FFD97D; }
+    .chip.dbx    { background: var(--purple-light); color: var(--purple); border-color: #C9A9E8; }
+    .chip.snow   { background: var(--blue-light); color: #0F5FA8; border-color: #A9CCF1; }
+    .chip.sql    { background: var(--green-light); color: var(--green); border-color: #9ED4B5; }
+
+    /* ─── SECTION HEADS ─── */
+    .sec-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .sec-head h2 {
+      font-size: 1.15rem; font-weight: 800;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .sec-head h2 .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--green); display: inline-block;
+    }
+    .sec-head a { font-size: 0.8rem; color: var(--green); font-weight: 600; }
+    .sec-head a:hover { text-decoration: underline; }
+
+    /* ─── FEATURED CARD ─── */
+    .featured-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .featured-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .featured-body { padding: 1.75rem; }
+    .featured-tag {
+      display: inline-block;
+      background: var(--green-light);
+      color: var(--green);
+      padding: 0.2rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+    .featured-card h3 {
+      font-size: 1.3rem; font-weight: 800;
+      line-height: 1.3; margin-bottom: 0.65rem;
+      color: var(--text);
+    }
+    .featured-card h3:hover { color: var(--green); }
+    .featured-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .featured-meta { display: flex; align-items: center; gap: 1rem; }
+    .meta-pill {
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .read-btn {
+      background: var(--green);
+      color: #fff;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: background 0.2s;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    .read-btn:hover { background: var(--green-mid); }
+    .featured-thumb {
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+
+    /* ─── ARTICLE LIST ─── */
+    .article-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 2rem; }
+    .article-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+    .article-item:hover { box-shadow: var(--shadow-md); border-color: var(--green); }
+    .art-tag {
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      padding: 0.15rem 0.55rem; border-radius: 3px;
+      display: inline-block; margin-bottom: 0.45rem;
+    }
+    .art-tag.aws    { background: var(--orange-light); color: var(--orange); }
+    .art-tag.spark  { background: #FFF0F0; color: var(--red); }
+    .art-tag.delta  { background: var(--blue-light); color: var(--blue); }
+    .art-tag.airflow{ background: #FFF8E1; color: #C77A00; }
+    .art-tag.dbx    { background: var(--purple-light); color: var(--purple); }
+    .art-tag.snow   { background: var(--blue-light); color: #0F5FA8; }
+    .art-tag.sql    { background: var(--green-light); color: var(--green); }
+    .art-tag.stream { background: #FDE8F5; color: #A0197F; }
+
+    .article-item h3 {
+      font-size: 0.975rem; font-weight: 700;
+      margin-bottom: 0.3rem; line-height: 1.35;
+      color: var(--text);
+    }
+    .article-item:hover h3 { color: var(--green); }
+    .article-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .art-meta { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+    .art-meta span { font-size: 0.72rem; color: var(--light-text); font-weight: 500; }
+    .art-thumb {
+      width: 80px; height: 80px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; flex-shrink: 0;
+    }
+
+    /* ─── ROADMAP CARDS ─── */
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .rm-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .rm-card:hover { box-shadow: var(--shadow-md); border-color: var(--green); }
+    .rm-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .rm-step {
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: 0.07em; margin-bottom: 0.25rem;
+    }
+    .rm-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+    .rm-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+    .rm-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .rm-tag {
+      font-size: 0.62rem; font-weight: 600;
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.1rem 0.45rem; border-radius: 3px;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .side-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .side-head {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem; font-weight: 800;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+
+    /* Author card */
+    .author-body { padding: 1.25rem; text-align: center; }
+    .author-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 800; color: #fff;
+      margin: 0 auto 0.75rem;
+      border: 3px solid var(--green-light);
+    }
+    .author-name { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.2rem; }
+    .author-role { font-size: 0.75rem; color: var(--green); font-weight: 600; margin-bottom: 0.75rem; }
+    .author-bio { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+    .author-links { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .alink {
+      padding: 0.35rem 0.85rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700;
+      border: 1.5px solid var(--border); color: var(--muted);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .alink:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .alink.primary { background: var(--green); color: #fff; border-color: var(--green); }
+    .alink.primary:hover { background: var(--green-mid); }
+
+    /* Popular topics */
+    .topic-list { padding: 0.5rem 0; }
+    .topic-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .topic-item:last-child { border-bottom: none; }
+    .topic-item:hover { background: var(--green-light); color: var(--green); }
+    .topic-count {
+      font-size: 0.7rem; color: var(--light-text); font-weight: 500;
+      background: var(--bg); padding: 0.1rem 0.5rem; border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* Newsletter */
+    .newsletter-body { padding: 1.25rem; }
+    .newsletter-body p { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.9rem; line-height: 1.6; }
+    .nl-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 6px;
+      padding: 0.6rem 0.85rem; font-size: 0.82rem; font-family: var(--sans);
+      outline: none; margin-bottom: 0.6rem; color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .nl-input:focus { border-color: var(--green); }
+    .nl-input::placeholder { color: var(--light-text); }
+    .nl-btn {
+      width: 100%; background: var(--green); color: #fff;
+      border: none; border-radius: 6px; padding: 0.65rem;
+      font-size: 0.85rem; font-weight: 700; font-family: var(--sans);
+      cursor: pointer; transition: background 0.2s;
+    }
+    .nl-btn:hover { background: var(--green-mid); }
+    .nl-note { font-size: 0.68rem; color: var(--light-text); text-align: center; margin-top: 0.5rem; }
+
+    /* Quick tools */
+    .tools-grid { padding: 1rem 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .tool-item {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.75rem;
+      text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tool-item:hover { border-color: var(--green); background: var(--green-light); }
+    .tool-icon { font-size: 1.3rem; margin-bottom: 0.3rem; }
+    .tool-name { font-size: 0.7rem; font-weight: 700; color: var(--text); }
+
+    /* ─── TECH STACK BAND ─── */
+    .stack-band {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      overflow: hidden;
+    }
+    .stack-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .stack-label {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.08em; white-space: nowrap; flex-shrink: 0;
+    }
+    .stack-pills {
+      display: flex; gap: 0.6rem; overflow-x: auto; scrollbar-width: none;
+      flex-wrap: wrap;
+    }
+    .stack-pills::-webkit-scrollbar { display: none; }
+    .spill {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.35rem 0.9rem;
+      font-size: 0.75rem; font-weight: 600; color: var(--text);
+      white-space: nowrap; flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .spill:hover { border-color: var(--green); background: var(--green-light); color: var(--green); }
+
+    /* ─── FOOTER ─── */
+    .footer-top {
+      background: #1B2838;
+      color: #fff;
+      padding: 3rem 1.5rem;
+    }
+    .footer-grid {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .footer-brand .logo { color: #74C69D; font-size: 1.2rem; }
+    .footer-brand p { font-size: 0.82rem; color: #8B9BB4; line-height: 1.7; margin-top: 0.75rem; max-width: 280px; }
+    .footer-col h4 { font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.07em; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col a { font-size: 0.8rem; color: #8B9BB4; transition: color 0.15s; }
+    .footer-col a:hover { color: #74C69D; }
+    .footer-bottom {
+      background: #141C28;
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+    .footer-bottom p { font-size: 0.75rem; color: #4A5568; }
+    .footer-bottom a { color: #74C69D; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .main { grid-template-columns: 1fr; }
+      .sidebar { display: grid; grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .header-nav { display: none; }
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-thumb { display: none; }
+      .roadmap-grid { grid-template-columns: 1fr; }
+      .sidebar { display: flex; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+      .hstat-num { font-size: 1.3rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; transform: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BANNER -->
+<div class="top-banner">
+  🚀 New guide live: <a href="https://medium.com/@mallinathnpatil1996/10-aws-services-every-data-engineer-should-learn-d357ed01b239" target="_blank">10 AWS Services Every Data Engineer Should Learn</a> &nbsp;·&nbsp; Free, no signup required
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">DataEngineer<span>.ai</span></div>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="search" placeholder="Search guides, tutorials, topics..." />
+    </div>
+    <ul class="header-nav">
+      <li><a href="#guides">Guides</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="https://medium.com/@mallinathnpatil1996" target="_blank">Blog</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="https://www.linkedin.com/in/mallinath-a51761310" target="_blank" class="btn-signup">Connect</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- CATEGORY NAV -->
+<nav class="cat-nav">
+  <div class="cat-nav-inner">
+    <a href="#" class="cat-link active">All Topics</a>
+    <a href="#" class="cat-link">AWS</a>
+    <a href="#" class="cat-link">PySpark</a>
+    <a href="#" class="cat-link">Delta Lake</a>
+    <a href="#" class="cat-link">Databricks</a>
+    <a href="#" class="cat-link">Airflow</a>
+    <a href="#" class="cat-link">Snowflake</a>
+    <a href="#" class="cat-link">Streaming</a>
+    <a href="#" class="cat-link">SQL</a>
+    <a href="#" class="cat-link">Interview Prep</a>
+    <a href="#" class="cat-link">Career</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">✦ Free Data Engineering Resource Hub</div>
+    <h1>Learn <em>Data Engineering</em><br/>the way it works in production</h1>
+    <p class="hero-sub">Practical guides on AWS, PySpark, Databricks, Delta Lake, and Airflow — written from 6 years of building real data platforms at scale.</p>
+    <div class="hero-search">
+      <input type="search" placeholder="Search: PySpark optimization, AWS Glue setup, Delta Lake..." />
+      <button>Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num">10+</div><div class="hstat-label">Free Guides</div></div>
+      <div class="hstat"><div class="hstat-num">6 Yrs</div><div class="hstat-label">Production Experience</div></div>
+      <div class="hstat"><div class="hstat-num">18M+</div><div class="hstat-label">Events/Day Built</div></div>
+      <div class="hstat"><div class="hstat-num">2 MNCs</div><div class="hstat-label">L'Oréal · EY</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK BAND -->
+<div class="stack-band">
+  <div class="stack-inner">
+    <span class="stack-label">Topics covered:</span>
+    <div class="stack-pills">
+      <span class="spill">☁️ AWS</span>
+      <span class="spill">⚡ PySpark</span>
+      <span class="spill">🔷 Delta Lake</span>
+      <span class="spill">🧱 Databricks</span>
+      <span class="spill">🔄 Apache Airflow</span>
+      <span class="spill">❄️ Snowflake</span>
+      <span class="spill">📡 Kinesis</span>
+      <span class="spill">🏗️ AWS Glue</span>
+      <span class="spill">🔍 Athena</span>
+      <span class="spill">📦 S3</span>
+      <span class="spill">🐍 Python</span>
+      <span class="spill">🗄️ SQL</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="content-col">
+
+    <!-- TOPIC CHIPS -->
+    <div class="topic-chips">
+      <span class="chip aws">☁️ AWS</span>
+      <span class="chip spark">⚡ PySpark</span>
+      <span class="chip delta">🔷 Delta Lake</span>
+      <span class="chip airflow">🔄 Airflow</span>
+      <span class="chip dbx">🧱 Databricks</span>
+      <span class="chip snow">❄️ Snowflake</span>
+      <span class="chip sql">🗄️ SQL</span>
+    </div>
+
+    <!-- FEATURED -->
+    <div id="guides">
+      <div class="sec-head">
+        <h2><span class="dot"></span> Featured Guide</h2>
+        <a href="https://medium.com/@mallinathnpatil1996" target="_blank">View all →</a>
+      </div>
+      <a href="https://medium.com/@mallinathnpatil1996/10-aws-services-every-data-engineer-should-learn-d357ed01b239" target="_blank">
+        <div class="featured-card">
+          <div class="featured-body">
+            <span class="featured-tag">⭐ Start Here · AWS</span>
+            <h3>10 AWS Services Every Data Engineer Should Learn</h3>
+            <p class="featured-desc">Most engineers starting with AWS feel overwhelmed by 200+ services. This guide cuts through the noise — covering S3, Glue, Athena, Kinesis, Redshift and more, with a practical learning order that mirrors real production architectures.</p>
+            <div class="featured-meta">
+              <span class="meta-pill">📖 5 min read</span>
+              <span class="meta-pill">🗓️ Jun 2026</span>
+              <span class="meta-pill">🔥 Trending</span>
+            </div>
+            <span class="read-btn">Read Guide →</span>
+          </div>
+          <div class="featured-thumb">☁️</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- LATEST GUIDES -->
+    <div class="sec-head" style="margin-top:2rem;">
+      <h2><span class="dot"></span> Latest Guides</h2>
+      <a href="https://medium.com/@mallinathnpatil1996" target="_blank">All articles →</a>
+    </div>
+    <div class="article-list">
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag aws">AWS · Glue</span>
+          <h3>Building Serverless ETL Pipelines with AWS Glue and PySpark</h3>
+          <p>How to design cost-efficient, serverless ETL using Glue jobs, crawlers, and the Data Catalog — with real config patterns from production.</p>
+          <div class="art-meta">
+            <span>📖 8 min read</span><span>🏷️ AWS · ETL · PySpark</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#FEF3E8;">🏗️</div>
+      </div>
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag spark">PySpark</span>
+          <h3>PySpark Optimization: From 45 Minutes to Under 10</h3>
+          <p>Partitioning, broadcasting, caching, and avoiding shuffles — the patterns that actually matter in production Spark jobs.</p>
+          <div class="art-meta">
+            <span>📖 10 min read</span><span>🏷️ PySpark · Performance · Databricks</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#FFF0F0;">⚡</div>
+      </div>
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag delta">Delta Lake</span>
+          <h3>Delta Lake for Beginners: ACID Transactions Explained Simply</h3>
+          <p>What Delta Lake actually does under the hood — transaction logs, time travel, schema enforcement, and when you need it vs plain Parquet.</p>
+          <div class="art-meta">
+            <span>📖 7 min read</span><span>🏷️ Delta Lake · Databricks · Lakehouse</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#E8F0FB;">🔷</div>
+      </div>
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag stream">Streaming</span>
+          <h3>Real-Time Pipelines with Amazon Kinesis: A Production Walkthrough</h3>
+          <p>Architecture walkthrough of a platform processing 18M+ events/day — Kinesis Data Streams, Firehose, and Lambda consumers.</p>
+          <div class="art-meta">
+            <span>📖 9 min read</span><span>🏷️ Kinesis · Streaming · Lambda</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#FDE8F5;">📡</div>
+      </div>
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag airflow">Airflow</span>
+          <h3>Apache Airflow DAG Design Patterns That Scale</h3>
+          <p>Common mistakes in DAG design and how to fix them — dynamic DAGs, sensors, XComs, and keeping pipelines maintainable.</p>
+          <div class="art-meta">
+            <span>📖 8 min read</span><span>🏷️ Airflow · Orchestration · DAGs</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#FFF8E1;">🔄</div>
+      </div>
+
+      <div class="article-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+        <div>
+          <span class="art-tag snow">Snowflake</span>
+          <h3>Snowflake for Data Engineers: Beyond the Basics</h3>
+          <p>Zero-copy cloning, time travel, dynamic data masking, and cost optimization — what you actually need to know for enterprise Snowflake.</p>
+          <div class="art-meta">
+            <span>📖 6 min read</span><span>🏷️ Snowflake · Data Warehouse · SQL</span>
+          </div>
+        </div>
+        <div class="art-thumb" style="background:#E8F0FB;">❄️</div>
+      </div>
+
+    </div>
+
+    <!-- ROADMAP -->
+    <div id="roadmap">
+      <div class="sec-head">
+        <h2><span class="dot"></span> Learning Roadmap</h2>
+        <span style="font-size:0.8rem;color:var(--muted);">Zero → Production-Ready</span>
+      </div>
+      <div class="roadmap-grid">
+        <div class="rm-card">
+          <div class="rm-icon">🐍</div>
+          <div class="rm-step">Step 1</div>
+          <h4>Python & SQL Foundations</h4>
+          <p>Data manipulation, query patterns — everything else builds on this.</p>
+          <div class="rm-tags"><span class="rm-tag">Python</span><span class="rm-tag">Pandas</span><span class="rm-tag">SQL</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">📦</div>
+          <div class="rm-step">Step 2</div>
+          <h4>Cloud Storage — AWS S3 + IAM</h4>
+          <p>S3 is the foundation of every modern data lake. Start here before any other AWS service.</p>
+          <div class="rm-tags"><span class="rm-tag">S3</span><span class="rm-tag">IAM</span><span class="rm-tag">Athena</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">⚡</div>
+          <div class="rm-step">Step 3</div>
+          <h4>Batch Processing — PySpark</h4>
+          <p>Distributed computing, transformations, partitioning, and shuffle optimization.</p>
+          <div class="rm-tags"><span class="rm-tag">PySpark</span><span class="rm-tag">Glue</span><span class="rm-tag">EMR</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">🔷</div>
+          <div class="rm-step">Step 4</div>
+          <h4>Data Lake Architecture</h4>
+          <p>Medallion architecture, Delta Lake ACID, schema evolution, and table formats.</p>
+          <div class="rm-tags"><span class="rm-tag">Delta Lake</span><span class="rm-tag">Databricks</span><span class="rm-tag">Iceberg</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">🔄</div>
+          <div class="rm-step">Step 5</div>
+          <h4>Orchestration — Airflow</h4>
+          <p>Schedule, monitor, and manage pipeline dependencies with DAG design best practices.</p>
+          <div class="rm-tags"><span class="rm-tag">Airflow</span><span class="rm-tag">DAGs</span><span class="rm-tag">Step Functions</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">📡</div>
+          <div class="rm-step">Step 6</div>
+          <h4>Streaming Pipelines</h4>
+          <p>Kinesis, Kafka, and exactly-once semantics for real-time data ingestion at scale.</p>
+          <div class="rm-tags"><span class="rm-tag">Kinesis</span><span class="rm-tag">Kafka</span><span class="rm-tag">Spark Streaming</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">🏭</div>
+          <div class="rm-step">Step 7</div>
+          <h4>Data Warehouse & Analytics</h4>
+          <p>Redshift and Snowflake — data modeling, clustering, materialized views, query optimization.</p>
+          <div class="rm-tags"><span class="rm-tag">Redshift</span><span class="rm-tag">Snowflake</span><span class="rm-tag">dbt</span></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-icon">🎯</div>
+          <div class="rm-step">Step 8</div>
+          <h4>Certifications & Job-Ready</h4>
+          <p>AWS Data Engineer Associate, Databricks DE Associate — what to study and in what order.</p>
+          <div class="rm-tags"><span class="rm-tag">AWS Cert</span><span class="rm-tag">Databricks Cert</span><span class="rm-tag">Interview Prep</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-col -->
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- AUTHOR -->
+    <div class="side-card" id="about">
+      <div class="side-head">👤 About the Author</div>
+      <div class="author-body">
+        <div class="author-avatar">M</div>
+        <div class="author-name">Mallinath</div>
+        <div class="author-role">Senior Data Engineer</div>
+        <p class="author-bio">6 years building production data platforms. Built real-time Customer 360 (18M+ events/day) at L'Oréal and an IFRS17 data lake at EY. Core stack: PySpark, AWS, Databricks, Airflow, Snowflake.</p>
+        <div class="author-links">
+          <a href="https://www.linkedin.com/in/mallinath-a51761310" target="_blank" class="alink primary">LinkedIn</a>
+          <a href="https://medium.com/@mallinathnpatil1996" target="_blank" class="alink">Medium</a>
+          <a href="https://twitter.com/ai_dataengineer" target="_blank" class="alink">Twitter</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="side-card">
+      <div class="side-head">📬 Weekly Guide</div>
+      <div class="newsletter-body">
+        <p>One new data engineering guide every week. Real production patterns, no fluff.</p>
+        <input type="email" class="nl-input" placeholder="your@email.com" />
+        <button class="nl-btn">Subscribe — It's Free</button>
+        <p class="nl-note">No spam. Unsubscribe anytime.</p>
+      </div>
+    </div>
+
+    <!-- POPULAR TOPICS -->
+    <div class="side-card">
+      <div class="side-head">🔥 Popular Topics</div>
+      <div class="topic-list">
+        <div class="topic-item">☁️ AWS Data Services <span class="topic-count">12 guides</span></div>
+        <div class="topic-item">⚡ PySpark <span class="topic-count">8 guides</span></div>
+        <div class="topic-item">🔷 Delta Lake <span class="topic-count">6 guides</span></div>
+        <div class="topic-item">🔄 Apache Airflow <span class="topic-count">5 guides</span></div>
+        <div class="topic-item">🧱 Databricks <span class="topic-count">7 guides</span></div>
+        <div class="topic-item">❄️ Snowflake <span class="topic-count">4 guides</span></div>
+        <div class="topic-item">🎯 Interview Prep <span class="topic-count">3 guides</span></div>
+      </div>
+    </div>
+
+    <!-- QUICK TOOLS -->
+    <div class="side-card">
+      <div class="side-head">⚡ Quick Resources</div>
+      <div class="tools-grid">
+        <div class="tool-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+          <div class="tool-icon">🗺️</div>
+          <div class="tool-name">Roadmap</div>
+        </div>
+        <div class="tool-item" onclick="window.open('https://www.linkedin.com/in/mallinath-a51761310','_blank')">
+          <div class="tool-icon">💼</div>
+          <div class="tool-name">LinkedIn</div>
+        </div>
+        <div class="tool-item" onclick="window.open('https://medium.com/@mallinathnpatil1996','_blank')">
+          <div class="tool-icon">✍️</div>
+          <div class="tool-name">Blog</div>
+        </div>
+        <div class="tool-item" onclick="window.open('https://twitter.com/ai_dataengineer','_blank')">
+          <div class="tool-icon">🐦</div>
+          <div class="tool-name">Twitter/X</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">DataEngineer<span style="color:#fff">.ai</span></div>
+        <p>Free data engineering guides written from real production experience. No paywalls, no fluff — just practical knowledge that works at scale.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Guides</h4>
+        <ul>
+          <li><a href="#">AWS for Data Engineers</a></li>
+          <li><a href="#">PySpark Patterns</a></li>
+          <li><a href="#">Delta Lake Guide</a></li>
+          <li><a href="#">Airflow Best Practices</a></li>
+          <li><a href="#">Snowflake Deep Dive</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Learning Roadmap</a></li>
+          <li><a href="#">Interview Prep</a></li>
+          <li><a href="#">Cheat Sheets</a></li>
+          <li><a href="https://medium.com/@mallinathnpatil1996" target="_blank">Medium Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/in/mallinath-a51761310" target="_blank">LinkedIn</a></li>
+          <li><a href="https://twitter.com/ai_dataengineer" target="_blank">Twitter / X</a></li>
+          <li><a href="https://instagram.com/DataEngineerAI" target="_blank">Instagram</a></li>
+          <li><a href="https://medium.com/@mallinathnpatil1996" target="_blank">Medium</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 <a href="#">DataEngineer.ai</a> · Built by Mallinath · All guides free to read</p>
+  </div>
+</footer>
+
+</body>
+</html>
